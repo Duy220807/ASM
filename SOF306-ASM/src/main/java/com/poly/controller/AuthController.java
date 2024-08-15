@@ -7,11 +7,6 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,9 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.poly.dao.AccountDAO;
 import com.poly.entity.Account;
 import com.poly.service.AccountService;
-import com.poly.service.AuthorityService;
 import com.poly.service.MailerService;
-import com.poly.service.RoleService;
 
 import net.bytebuddy.utility.RandomString;
 
@@ -46,15 +39,6 @@ public class AuthController {
 	@Autowired
 	MailerService mailer;
 
-	@Autowired
-	RoleService roleService;
-
-	@Autowired
-	AuthorityService authorityService;
-
-	@Autowired
-	private AuthenticationManager authenticationManager;
-
 	@CrossOrigin("*")
 	@ResponseBody
 	@RequestMapping("/rest/auth/authentication")
@@ -69,7 +53,7 @@ public class AuthController {
 
 	@RequestMapping("/auth/login/success")
 	public String logInSuccess(Model model, @ModelAttribute("account") Account account) {
-		// model.addAttribute("message", "Logged in successfully");
+		model.addAttribute("message", "Logged in successfully");
 		return "redirect:/index";
 	}
 
@@ -114,8 +98,10 @@ public class AuthController {
 			model.addAttribute("message", "Please correct the error below!");
 			return "auth/register";
 		}
-		accountService.registerAccount(account);
-		model.addAttribute("message", "New account registration successfully!");
+		account.setPhoto("user.png");
+		account.setToken("token");
+		accountService.create(account);
+		model.addAttribute("message", "New account registration successful!");
 		response.addHeader("refresh", "2;url=/auth/login/form");
 		return "auth/register";
 	}
@@ -181,30 +167,8 @@ public class AuthController {
 		return "auth/change-password";
 	}
 
-	@PostMapping("/auth/login")
-	public String processLogin(@RequestParam("username") String username,
-			@RequestParam("password") String password,
-			HttpServletRequest request,
-			HttpServletResponse response,
-			Model model) {
-		try {
-			// Xử lý xác thực người dùng
-			Authentication authentication = authenticationManager.authenticate(
-					new UsernamePasswordAuthenticationToken(username, password));
-			SecurityContextHolder.getContext().setAuthentication(authentication);
-
-			// Redirect đến trang chính sau khi đăng nhập thành công
-			return "redirect:/index";
-		} catch (AuthenticationException e) {
-			// Xử lý lỗi đăng nhập
-			model.addAttribute("message", "Invalid username or password!");
-			return "auth/login";
-		}
-	}
-
 	public String getSiteURL(HttpServletRequest request) {
 		String siteURL = request.getRequestURL().toString();
 		return siteURL.replace(request.getServletPath(), "");
 	}
-
 }

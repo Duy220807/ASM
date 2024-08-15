@@ -11,6 +11,8 @@ public interface ProductDAO extends JpaRepository<Product, Integer> {
 	@Query("SELECT p FROM Product p WHERE p.category.id=?1")
 	List<Product> findByCategoryId(String cid);
 
-//	@Query(value = "SELECT count(p.id) FROM Products p", nativeQuery = true)
-//	Integer countAllProduct();
+	List<Product> findByNameContainingIgnoreCase(String name);
+
+	// @Query(value = "SELECT count(p.id) FROM Products p", nativeQuery = true)
+	// Integer countAllProduct();
 }

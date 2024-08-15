@@ -23,8 +23,12 @@ public class HomeController {
 	ProductService productService;
 
 	@RequestMapping({ "/", "/index" })
-	public String home(Model model, @RequestParam("cid") Optional<String> cid) {
-		if (cid.isPresent()) {
+	public String home(Model model, @RequestParam("cid") Optional<String> cid,
+			@RequestParam("search") Optional<String> search) {
+		if (search.isPresent()) {
+			List<Product> list = productService.searchProducts(search.get());
+			model.addAttribute("items", list);
+		} else if (cid.isPresent()) {
 			List<Product> list = productService.findByCategoryId(cid.get());
 			model.addAttribute("items", list);
 		} else {

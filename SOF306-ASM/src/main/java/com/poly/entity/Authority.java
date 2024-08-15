@@ -30,30 +30,4 @@ public class Authority implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "Roleid")
 	private Role role;
-	
-	public Role getRole() {
-        return this.role;
-    }
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public Account getAccount() {
-		return account;
-	}
-
-	public void setAccount(Account account) {
-		this.account = account;
-	}
-
-	public void setRole(Role role) {
-		this.role = role;
-	}
-	
-	
 }

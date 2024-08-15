@@ -43,9 +43,10 @@
 								<li class="account">
 									<div class="search-form-wrap">
 										<div class="search-form">
-											<form action="#">
+											<form method="get" action="/">
 												<div class="form-group">
-													<input class="form-control" type="search" placeholder="Search our store">
+													<input class="form-control" name="search" type="search"
+														placeholder="Search our store">
 													<button class="btn-search">Search</button>
 												</div>
 											</form>
@@ -109,7 +110,8 @@
 											</li>
 										</th:block>
 										<th:block th:if="${#request.remoteUser}">
-											<li th:if="${#request.isUserInRole('Dire') or #request.isUserInRole('STAF')}">
+											<li
+												th:if="${#request.isUserInRole('Dire') or #request.isUserInRole('STAF')}">
 												<a th:href="@{/admin}">Adminstrator</a>
 											</li>
 											<li>

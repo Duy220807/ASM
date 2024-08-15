@@ -14,11 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.poly.dao.AccountDAO;
 import com.poly.entity.Account;
-import com.poly.entity.Authority;
-import com.poly.entity.Role;
 import com.poly.service.AccountService;
-import com.poly.service.AuthorityService;
-import com.poly.service.RoleService;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -28,12 +24,6 @@ public class AccountServiceImpl implements AccountService {
 
 	@Autowired
 	PasswordEncoder pe;
-
-	@Autowired
-	RoleService roleService;
-
-	@Autowired
-	AuthorityService authorityService;
 
 	@Override
 	public Account findById(String username) {
@@ -51,16 +41,8 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public void registerAccount(Account account) {
-		account.setPhoto("user.png");
-		account.setToken("token");
-		adao.save(account);
-
-		Role userRole = roleService.findByRoleName("Directors");
-		Authority authority = new Authority();
-		authority.setAccount(account);
-		authority.setRole(userRole);
-		authorityService.create(authority);
+	public Account create(Account account) {
+		return adao.save(account);
 	}
 
 	@Override

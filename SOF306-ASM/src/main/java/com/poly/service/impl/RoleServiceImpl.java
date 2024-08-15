@@ -17,11 +17,4 @@ public class RoleServiceImpl implements RoleService {
 	public List<Role> findAll() {
 		return dao.findAll();
 	}
-
-	@Autowired
-    private RoleDAO roleDao;
-
-    public Role findByRoleName(String roleName) {
-        return roleDao.findByName(roleName);
-    }
 }

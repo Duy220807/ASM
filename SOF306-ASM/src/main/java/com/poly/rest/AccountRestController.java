@@ -39,10 +39,10 @@ public class AccountRestController {
 		return accountService.findById(id);
 	}
 
-	// @PostMapping
-	// public Account create(@RequestBody Account account) {
-	// // return accountService.registerAccount(account);
-	// }
+	@PostMapping
+	public Account create(@RequestBody Account account) {
+		return accountService.create(account);
+	}
 
 	@PutMapping("{id}")
 	public Account update(@PathVariable("id") String id, @RequestBody Account account) {

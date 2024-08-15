@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -23,7 +22,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.poly.entity.Account;
-import com.poly.entity.Authority;
 import com.poly.service.AccountService;
 
 @Configuration
@@ -38,8 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	HttpSession session;
-	
-	 
+
 	/* Cơ chế mã hóa mật khẩu */
 	@Bean
 	public BCryptPasswordEncoder getPasswordEncoder() {
@@ -59,9 +56,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			try {
 				Account user = accountService.findById(username);
 				String password = pe.encode(user.getPassword()); // Mã hóa mật khấu
-				String[] roles = user.getAuthorities().stream()
-					    .map((Authority er) -> er.getRole().getId()) // Chỉ rõ kiểu dữ liệu cho lambda
-					    .toArray(String[]::new);
+				String[] roles = user.getAuthorities().stream().map(er -> er.getRole().getId())
+						.collect(Collectors.toList()).toArray(new String[0]);
 				Map<String, Object> authentication = new HashMap<>();
 				authentication.put("user", user);
 				byte[] token = (username + ":" + user.getPassword()).getBytes();
@@ -83,7 +79,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/admin/**").hasAnyRole("STAF", "DIRE").antMatchers("/rest/authorities").hasRole("DIRE")
 				.anyRequest().permitAll();
 		// Đăng nhập
-		http.formLogin().loginPage("/auth/login/form")
+		http.formLogin().loginPage("/auth/login/form").loginProcessingUrl("/auth/login")
 				.defaultSuccessUrl("/auth/login/success", false).failureUrl("/auth/login/error");
 		http.rememberMe().tokenValiditySeconds(86400); // remember me
 		// Điều khiển lỗi truy cập không đúng quyền
@@ -94,10 +90,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.oauth2Login().loginPage("/auth/login/form").defaultSuccessUrl("/oauth2/login/success", true)
 				.failureUrl("/auth/login/error").authorizationEndpoint().baseUri("/oauth2/authorization");
 	}
-	
-	@Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
 }

@@ -43,4 +43,9 @@ public class ProductServiceImpl implements ProductService {
 		pdao.deleteById(id);
 	}
 
+	@Override
+	public List<Product> searchProducts(String keyword) {
+		return pdao.findByNameContainingIgnoreCase(keyword);
+	}
+
 }

@@ -13,7 +13,7 @@ public interface AccountService {
 
 	List<Account> getAdministrators();
 
-	public void registerAccount(Account account);
+	Account create(Account account);
 
 	Account update(Account account);
 
