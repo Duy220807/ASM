@@ -18,6 +18,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -79,7 +80,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/admin/**").hasAnyRole("STAF", "DIRE").antMatchers("/rest/authorities").hasRole("DIRE")
 				.anyRequest().permitAll();
 		// Đăng nhập
-		http.formLogin().loginPage("/auth/login/form").loginProcessingUrl("/auth/login")
+		http.formLogin().loginPage("/auth/login/form")
 				.defaultSuccessUrl("/auth/login/success", false).failureUrl("/auth/login/error");
 		http.rememberMe().tokenValiditySeconds(86400); // remember me
 		// Điều khiển lỗi truy cập không đúng quyền

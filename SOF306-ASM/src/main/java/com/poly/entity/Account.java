@@ -26,7 +26,6 @@ public class Account implements Serializable {
 	@NotBlank(message = "Không được để trống")
 	String username;
 	@NotBlank(message = "Không được để trống")
-	@Size(min = 3, max = 12, message = "Mật khẩu phải từ 3 đến 12 ký tự")
 	String password;
 	@NotBlank(message = "Không được để trống")
 	String fullname;
@@ -43,5 +42,4 @@ public class Account implements Serializable {
 	@OneToMany(mappedBy = "account", fetch = FetchType.EAGER)
 	List<Authority> authorities;
 
-	
 }

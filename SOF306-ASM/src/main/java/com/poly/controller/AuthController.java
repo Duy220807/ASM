@@ -7,6 +7,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,6 +39,9 @@ public class AuthController {
 
 	@Autowired
 	MailerService mailer;
+
+	@Autowired
+	PasswordEncoder passwordEncoder;
 
 	@CrossOrigin("*")
 	@ResponseBody
@@ -98,6 +102,11 @@ public class AuthController {
 			model.addAttribute("message", "Please correct the error below!");
 			return "auth/register";
 		}
+
+		// Mã hóa mật khẩu trước khi lưu
+		String encodedPassword = passwordEncoder.encode(account.getPassword());
+		account.setPassword(encodedPassword);
+
 		account.setPhoto("user.png");
 		account.setToken("token");
 		accountService.create(account);
@@ -170,5 +179,19 @@ public class AuthController {
 	public String getSiteURL(HttpServletRequest request) {
 		String siteURL = request.getRequestURL().toString();
 		return siteURL.replace(request.getServletPath(), "");
+	}
+
+	@PostMapping("/auth/login")
+	public String logIn(@RequestParam("username") String username,
+			@RequestParam("password") String password,
+			Model model) {
+		Account account = accountService.findById(username);
+		if (account != null && passwordEncoder.matches(password, account.getPassword())) {
+			// Thành công đăng nhập
+			return "redirect:/index";
+		} else {
+			model.addAttribute("message", "Invalid username or password");
+			return "auth/login";
+		}
 	}
 }
